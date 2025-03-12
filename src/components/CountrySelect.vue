@@ -5,7 +5,7 @@ import debounce from "@/utils/debounce.js";
 defineProps(['selectedCountry'])
 defineEmits(["update:selectedCountry"]);
 
-const searchCountry = ref('')
+const searchCountry = ref(null)
 const isLoadingCountries = ref(false);
 const countries = ref([])
 const fetchLimit = ref(30);
@@ -15,7 +15,7 @@ onMounted(() => setCountries())
 async function setCountries() {
   isLoadingCountries.value = true;
   countries.value = [];
-  const data = await fetchCountry(encodeURI(searchCountry.value), fetchLimit.value)
+  const data = await fetchCountry(encodeURI(searchCountry.value || ''), fetchLimit.value)
 
   countries.value = data
     ? data.map(country => ({value: country, title: country.name}))
@@ -40,14 +40,12 @@ watch(searchCountry, debounce(() => setCountries()))
     :items="countries"
     :loading="isLoadingCountries"
     :no-data-text="isLoadingCountries ? 'Loading...':'No countries found'"
-    @update:model-value="searchCountry = ''"
   >
-    >
     <template #selection v-if="selectedCountry">{{ selectedCountry.name }}</template>
     <template #prepend-item>
       <v-list-item class="border-b">
         <v-text-field v-model="searchCountry" placeholder="Type to search" variant="plain"
-                      density="compact" @keydown.space.stop
+                      density="compact" @keydown.space.stop clearable
                       hide-details="auto"/>
       </v-list-item>
     </template>
