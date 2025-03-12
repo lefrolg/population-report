@@ -19,6 +19,10 @@ const selectedCountry = defineModel();
 const selectedCities = ref([]);
 
 const selectedCountryIso = computed(() => selectedCountry.value?.iso2)
+watch(selectedCountryIso, () => {
+  selectedCities.value = [];
+})
+
 </script>
 
 <template>
@@ -26,7 +30,7 @@ const selectedCountryIso = computed(() => selectedCountry.value?.iso2)
     <div class="w-100">
       <country-select v-model:selected-country="selectedCountry" />
       <city-multiselect
-        v-if="selectedCountry"
+        v-if="selectedCountryIso"
         v-model:selected-cities="selectedCities"
         :selected-country-iso="selectedCountryIso"
       />
