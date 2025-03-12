@@ -1,8 +1,9 @@
 <script setup>
 import {fetchCity} from "@/services/cities.js";
 import debounce from "@/utils/debounce.js";
+import LegendCircle from "@/components/LegendCircle.vue";
 
-const props = defineProps(['selectedCountryIso', 'selectedCities'])
+const props = defineProps(['selectedCountryIso', 'selectedCities', 'maxCities'])
 const emits = defineEmits(["update:selectedCities"]);
 
 const selectedCitiesValue = computed({
@@ -68,11 +69,18 @@ const citiesWithRecent = computed(() => {
   return cities.value.concat(recentCitiesWithoutSearchResult)
 })
 
+const isLimitReached = computed(() => selectedCitiesValue.value.length >= props.maxCities);
+const citiesToSelect = computed(() => isLimitReached.value ? [] : citiesWithRecent.value)
+
 const itemProps = (city) => ({
   value: city.name,
   title: city.name,
   subtitle: city.isRecent ? "Recent" : searchCity.value ? "Search result" : '',
 })
+
+function getCityColor(name){
+  return props.selectedCities.find(city => city.name === name)?.color || ''
+}
 
 </script>
 
@@ -86,12 +94,18 @@ const itemProps = (city) => ({
       chips
       hide-details="auto"
       v-model="selectedCitiesValue"
-      :items="citiesWithRecent"
+      :items="citiesToSelect"
       :item-props="itemProps"
       :loading="isLoadingCities"
       no-data-text="No cities found"
       closable-chips
   >
+    <template #chip="{item, props}" v-bind="props">
+      <v-chip v-bind="props">
+        <legend-circle class="mr-2" :color="getCityColor(item.title)" :size="16" />
+        {{item.title}}
+      </v-chip>
+    </template>
     <template #prepend-item>
       <v-list-item class="border-b">
         <v-text-field

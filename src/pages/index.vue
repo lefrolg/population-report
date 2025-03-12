@@ -9,7 +9,7 @@
             :countryId="countryId"
             @remove-country="removeCountry"
           />
-          <div class="py-2" v-if="createdLines.length < maxLines">
+          <div class="py-2" v-if="createdLines.length < maxCountries">
             <v-btn variant="outlined" @click="addCountry">
               <template #prepend>
                 <v-icon icon="mdi-plus"></v-icon>
@@ -29,13 +29,11 @@
 <script setup>
 import CountryLine from "@/components/CountryLine.vue";
 import {generateId} from "@/utils/generateId.js";
-import colors from 'vuetify/lib/util/colors';
 import {useSelectedCountriesStore} from "@/stores/selected-countries.js";
+import {storeToRefs} from "pinia";
 
-const maxLines = ref(Object.keys(colors).length - 1);
 const store = useSelectedCountriesStore();
-
-const createdLines = computed(() => store.selectedCountriesId)
+const {maxCountries, selectedCountriesId: createdLines} = storeToRefs(store)
 
 onMounted(() => {
   addCountry()

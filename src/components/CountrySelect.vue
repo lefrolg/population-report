@@ -1,9 +1,13 @@
 <script setup>
 import {fetchCountry} from "@/services/countries.js";
 import debounce from "@/utils/debounce.js";
+import colors from 'vuetify/lib/util/colors';
+import LegendCircle from "@/components/LegendCircle.vue";
 
-const props = defineProps(['selectedCountry', 'excluded'])
+const props = defineProps(['selectedCountry', 'excluded', 'color'])
 defineEmits(["update:selectedCountry"]);
+
+const countryColor = computed( () => colors[props.color].base )
 
 const searchCountry = ref(null)
 const isLoadingCountries = ref(false);
@@ -46,7 +50,10 @@ const itemProps = (country) => ({
     :loading="isLoadingCountries"
     :no-data-text="isLoadingCountries ? 'Loading...':'No countries found'"
   >
-    <template #selection v-if="selectedCountry">{{ selectedCountry.name }}</template>
+    <template #selection v-if="selectedCountry">
+      <legend-circle class="mr-2" :color="countryColor" :size="16" />
+      {{ selectedCountry.name }}
+    </template>
     <template #prepend-item>
       <v-list-item class="border-b">
         <v-text-field v-model="searchCountry" placeholder="Type to search" variant="plain"
@@ -67,5 +74,8 @@ const itemProps = (country) => ({
 </template>
 
 <style scoped lang="scss">
+
+
+
 
 </style>

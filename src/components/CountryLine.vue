@@ -13,7 +13,7 @@ const props = defineProps({
 const emits = defineEmits(['removeCountry'])
 
 const store = useSelectedCountriesStore();
-const {selectedCountriesIso} = storeToRefs(store)
+const {selectedCountriesIso, maxCities} = storeToRefs(store)
 
 function removeLine() {
   emits('removeCountry', props.countryId);
@@ -21,13 +21,15 @@ function removeLine() {
 
 const selectedCountry = computed({
   set: (value) => {
-    store.updateCountry(props.countryId, value, [])
+    store.updateCountry(props.countryId, value)
   },
   get: () => {
     const {name, iso2} = store.getCountryById(props.countryId);
     return name ? {name, iso2} : null;
   }
 });
+const countryColor = computed(() => store.getCountryById(props.countryId)?.baseColor || '')
+
 const selectedCities = computed({
   set: (value) => {
     store.updateCities(props.countryId, value)
@@ -46,13 +48,15 @@ const selectedCountryIso = computed(() => selectedCountry.value?.iso2)
   <div class="country py-2 border-b d-flex ga-3">
     <div class="w-100">
       <country-select
-          v-model:selected-country="selectedCountry"
-          :excluded="selectedCountriesIso"
+        v-model:selected-country="selectedCountry"
+        :excluded="selectedCountriesIso"
+        :color="countryColor"
       />
       <city-multiselect
-          v-if="selectedCountryIso"
-          v-model:selected-cities="selectedCities"
-          :selected-country-iso="selectedCountryIso"
+        :maxCities="maxCities"
+        v-if="selectedCountryIso"
+        v-model:selected-cities="selectedCities"
+        :selected-country-iso="selectedCountryIso"
       />
     </div>
     <v-btn icon="mdi-close" variant="plain" density="comfortable" title="Remove line" @click="removeLine"></v-btn>
