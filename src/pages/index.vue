@@ -30,16 +30,24 @@
 import CountryLine from "@/components/CountryLine.vue";
 import {generateId} from "@/utils/generateId.js";
 import colors from 'vuetify/lib/util/colors';
+import {useSelectedCountriesStore} from "@/stores/selected-countries.js";
 
-const createdLines = ref([generateId()]);
 const maxLines = ref(Object.keys(colors).length - 1);
+const store = useSelectedCountriesStore();
+
+const createdLines = computed(() => store.selectedCountriesId)
+
+onMounted(() => {
+  addCountry()
+})
 
 function addCountry() {
-  createdLines.value.push(generateId());
+  const countryId = generateId();
+  store.addCountry(countryId)
 }
 
 function removeCountry(id) {
-  createdLines.value.splice(createdLines.value.indexOf(id), 1);
+  store.removeCountry(id)
 }
 
 </script>

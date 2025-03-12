@@ -2,7 +2,7 @@
 import {fetchCountry} from "@/services/countries.js";
 import debounce from "@/utils/debounce.js";
 
-defineProps(['selectedCountry'])
+const props = defineProps(['selectedCountry', 'excluded'])
 defineEmits(["update:selectedCountry"]);
 
 const searchCountry = ref(null)
@@ -12,19 +12,23 @@ const fetchLimit = ref(30);
 
 onMounted(() => setCountries())
 
+watch(searchCountry, debounce(() => setCountries()))
 async function setCountries() {
   isLoadingCountries.value = true;
   countries.value = [];
   const data = await fetchCountry(encodeURI(searchCountry.value || ''), fetchLimit.value)
 
-  countries.value = data
-    ? data.map(country => ({value: country, title: country.name}))
-    : []
+  countries.value = data ? data : []
 
   isLoadingCountries.value = false;
 }
 
-watch(searchCountry, debounce(() => setCountries()))
+const itemProps = (country) => ({
+  value: country,
+  title: country.name,
+  subtitle: props.excluded.includes(country.iso2) ? 'Country already selected' : '',
+  disabled: props.excluded.includes(country.iso2)
+})
 
 </script>
 
@@ -38,6 +42,7 @@ watch(searchCountry, debounce(() => setCountries()))
     :value="selectedCountry"
     @update:modelValue="$emit('update:selectedCountry', $event)"
     :items="countries"
+    :item-props="itemProps"
     :loading="isLoadingCountries"
     :no-data-text="isLoadingCountries ? 'Loading...':'No countries found'"
   >
@@ -48,6 +53,12 @@ watch(searchCountry, debounce(() => setCountries()))
                       density="compact" @keydown.space.stop clearable
                       hide-details="auto"/>
       </v-list-item>
+    </template>
+    <template #item="{props, item}">
+      <v-list-item
+        v-bind="!item.disabled ? props : {}"
+        :class="{disabled: item.disabled}"
+      ></v-list-item>
     </template>
     <template #append-item v-if="!searchCountry && countries.length >= fetchLimit">
       <small class=" d-block text-center">Search to see more</small>

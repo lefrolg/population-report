@@ -78,7 +78,7 @@ const itemProps = (city) => ({
 
 <template>
   <v-select
-      :class="{'mt-2': !selectedCities.length, 'mt-3': selectedCities.length}"
+      :class="{'mt-2': !selectedCitiesValue.length, 'mt-3': selectedCitiesValue.length}"
       label="Select cities"
       variant="outlined"
       density="compact"
