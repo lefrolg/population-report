@@ -7,6 +7,10 @@ const {shades, grey, ...colorsPalette} = colors;
 export const useSelectedCountriesStore = defineStore('selected-countries', () => {
   const selectedData = ref([]);
 
+  const selectedDataWithCities = computed(() => {
+    return selectedData.value.filter(country => country?.cities && country.cities.length)
+  });
+
   // Countries
   function addCountry(id) {
     if (selectedData.value.find(country => country.id === id))
@@ -72,6 +76,7 @@ export const useSelectedCountriesStore = defineStore('selected-countries', () =>
 
 
   return {
+    selectedDataWithCities,
     selectedData,
     maxCountries,
     addCountry,

@@ -21,7 +21,9 @@
           </div>
         </div>
       </v-col>
-      <v-col cols="9">chart</v-col>
+      <v-col cols="9">
+        <PopulationChart/>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -31,6 +33,7 @@ import CountryLine from "@/components/CountryLine.vue";
 import {generateId} from "@/utils/generateId.js";
 import {useSelectedCountriesStore} from "@/stores/selected-countries.js";
 import {storeToRefs} from "pinia";
+import PopulationChart from "@/components/PopulationChart.vue";
 
 const store = useSelectedCountriesStore();
 const {maxCountries, selectedCountriesId: createdLines} = storeToRefs(store)

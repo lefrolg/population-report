@@ -76,7 +76,6 @@ const itemProps = (city) => ({
   value: city.name,
   title: city.name,
   subtitle: city.isRecent ? "Recent" : searchCity.value ? "Search result" : '',
-  disabled: isLimitReached.value && selectedCitiesValue.value.find(c => c.name === city.name)
 })
 
 function getCityColor(name){
