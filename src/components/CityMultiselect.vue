@@ -8,6 +8,7 @@ const emits = defineEmits(["update:selectedCities"]);
 
 const selectedCitiesValue = computed({
   set: (values) => {
+    if (values.length > props.maxCities) return;
     const citiesValue = citiesWithRecent.value.filter((city) => values.includes(city.name))
     emits("update:selectedCities", citiesValue);
   },
@@ -69,13 +70,13 @@ const citiesWithRecent = computed(() => {
   return cities.value.concat(recentCitiesWithoutSearchResult)
 })
 
-const isLimitReached = computed(() => selectedCitiesValue.value.length >= props.maxCities);
-const citiesToSelect = computed(() => isLimitReached.value ? [] : citiesWithRecent.value)
+const isLimitReached = computed(() => props.selectedCities.length >= props.maxCities);
 
 const itemProps = (city) => ({
   value: city.name,
   title: city.name,
   subtitle: city.isRecent ? "Recent" : searchCity.value ? "Search result" : '',
+  disabled: isLimitReached.value && selectedCitiesValue.value.find(c => c.name === city.name)
 })
 
 function getCityColor(name){
@@ -94,11 +95,12 @@ function getCityColor(name){
       chips
       hide-details="auto"
       v-model="selectedCitiesValue"
-      :items="citiesToSelect"
+      :items="citiesWithRecent"
       :item-props="itemProps"
       :loading="isLoadingCities"
       no-data-text="No cities found"
       closable-chips
+      :auto-select-first="false"
   >
     <template #chip="{item, props}" v-bind="props">
       <v-chip v-bind="props">
@@ -110,9 +112,12 @@ function getCityColor(name){
       <v-list-item class="border-b">
         <v-text-field
             clearable
-            @keydown.space.stop
+            @keydown.stop
             v-model="searchCity" placeholder="Type to search" variant="plain" density="compact"
             hide-details="auto"/>
+      </v-list-item>
+      <v-list-item v-if="isLimitReached" class="text-red-darken-3">
+        Limit of cities reached
       </v-list-item>
       <v-list-item v-if="isLoadingCities">
         Loading...

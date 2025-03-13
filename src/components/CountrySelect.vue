@@ -49,6 +49,7 @@ const itemProps = (country) => ({
     :item-props="itemProps"
     :loading="isLoadingCountries"
     :no-data-text="isLoadingCountries ? 'Loading...':'No countries found'"
+    :auto-select-first="false"
   >
     <template #selection v-if="selectedCountry">
       <legend-circle class="mr-2" :color="countryColor" :size="16" />
@@ -57,7 +58,7 @@ const itemProps = (country) => ({
     <template #prepend-item>
       <v-list-item class="border-b">
         <v-text-field v-model="searchCountry" placeholder="Type to search" variant="plain"
-                      density="compact" @keydown.space.stop clearable
+                      density="compact" @keydown.stop clearable
                       hide-details="auto"/>
       </v-list-item>
     </template>

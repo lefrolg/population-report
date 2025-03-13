@@ -26,7 +26,7 @@ export const useSelectedCountriesStore = defineStore('selected-countries', () =>
   }
 
   function getCountryById(id) {
-    return selectedData.value.find(country => country.id === id);
+    return selectedData.value.find(country => country.id === id) || {};
   }
 
   function updateCountry(id, country,) {
@@ -53,8 +53,8 @@ export const useSelectedCountriesStore = defineStore('selected-countries', () =>
   function updateCities(id, cities) {
     const countryRef = getCountryById(id);
     countryRef.cities = cities.map((city) => {
-      const cityExisted = countryRef.cities.find(c=> c.name === city.name)
-      if (cityExisted) return cityExisted;
+      const cityExisted = countryRef.cities.find(c => c.name === city.name)
+      if (cityExisted) return {...cityExisted};
 
       const {name, population, is_capital} = city;
       const color = Object.values(colorsPalette[countryRef.baseColor])
@@ -68,9 +68,7 @@ export const useSelectedCountriesStore = defineStore('selected-countries', () =>
     return countryRef?.cities || [];
   }
 
-  const maxCities = computed(() => Object.values(
-    Object.values(colorsPalette)[0]
-  ).length)
+  const maxCities = computed(() => Object.values(Object.values(colorsPalette)[0]).length)
 
 
   return {
