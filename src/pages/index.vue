@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row align="stretch">
-      <v-col cols="3">
+      <v-col cols="12" lg="3">
         <div class="countries">
           <CountryLine
             v-for="countryId in createdLines"
@@ -21,7 +21,7 @@
           </div>
         </div>
       </v-col>
-      <v-col cols="9" class="position-relative">
+      <v-col cols="12" lg="9" class="position-relative">
         <div class="position-sticky top-0">
           <PopulationChart />
         </div>
