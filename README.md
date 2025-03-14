@@ -1,52 +1,74 @@
 # Population report
 
-## 💿 Install
+[Live site](https://lefrolg.github.io/population-report/)
 
-Set up your project using your preferred package manager. Use the corresponding command to install the dependencies:
+User-friendly page that allows users to dynamically search and choose cities filtered by countries and be able to see the population data on the bar chart.
 
-| Package Manager                                                | Command        |
-|---------------------------------------------------------------|----------------|
-| [yarn](https://yarnpkg.com/getting-started)                   | `yarn install` |
-| [npm](https://docs.npmjs.com/cli/v7/commands/npm-install)     | `npm install`  |
-| [pnpm](https://pnpm.io/installation)                          | `pnpm install` |
-| [bun](https://bun.sh/#getting-started)                        | `bun install`  |
+## Features
 
-After completing the installation, your environment is ready for Vuetify development.
+* Left sidebar for selecting multiple countries and their respective cities.
+* Dynamic bar chart displaying city populations, grouped by country.
+* Filtering options to refine the dataset based on population size.
+* Real-time updates to the chart based on user selections and applied filters.
+* Caching mechanism to enhance performance and usability.
+* Responsive design for optimal viewing across different devices.
 
-## ✨ Features
+![Page](src/assets/screenshot.png)
+
+## ✨ Tech Stack
 
 - 🖼️ **Optimized Front-End Stack**: Leverage the latest Vue 3 and Vuetify 3 for a modern, reactive UI development experience. [Vue 3](https://v3.vuejs.org/) | [Vuetify 3](https://vuetifyjs.com/en/)
 - 🗃️ **State Management**: Integrated with [Pinia](https://pinia.vuejs.org/), the intuitive, modular state management solution for Vue.
 - 🚦 **Routing and Layouts**: Utilizes Vue Router for SPA navigation and vite-plugin-vue-layouts for organizing Vue file layouts. [Vue Router](https://router.vuejs.org/) | [vite-plugin-vue-layouts](https://github.com/JohnCampionJr/vite-plugin-vue-layouts)
+- 📊 **Data Visualization**: Built-in support for Chart.js with Vue bindings via vue-chartjs to create interactive and visually appealing charts. [Chart.js](https://www.chartjs.org/) | [Vue Chart.js](https://vue-chartjs.org/)
+- 🔄 **Data Fetching & Caching**: Uses Axios for efficient API requests, enhanced with axios-cache-interceptor for improved performance and reduced redundant network calls.[Axios](https://axios-http.com/) | [Axios Cache Interceptor](https://axios-cache-interceptor.js.org/)
 - ⚡ **Next-Gen Tooling**: Powered by Vite, experience fast cold starts and instant HMR (Hot Module Replacement). [Vite](https://vitejs.dev/)
 - 🧩 **Automated Component Importing**: Streamline your workflow with unplugin-vue-components, automatically importing components as you use them. [unplugin-vue-components](https://github.com/antfu/unplugin-vue-components)
 
 These features are curated to provide a seamless development experience from setup to deployment, ensuring that your Vuetify application is both powerful and maintainable.
 
-## 💡 Usage
+## Getting Started
 
-This section covers how to start the development server and build your project for production.
-
-### Starting the Development Server
-
-To start the development server with hot-reload, run the following command. The server will be accessible at [http://localhost:3000](http://localhost:3000):
+1. Clone the repository:
 
 ```bash
-yarn dev
+git clone https://github.com/lefrolg/population-report.git
 ```
 
-(Repeat for npm, pnpm, and bun with respective commands.)
-
-> Add NODE_OPTIONS='--no-warnings' to suppress the JSON import warnings that happen as part of the Vuetify import mapping. If you are on Node [v21.3.0](https://nodejs.org/en/blog/release/v21.3.0) or higher, you can change this to NODE_OPTIONS='--disable-warning=5401'. If you don't mind the warning, you can remove this from your package.json dev script.
-
-### Building for Production
-
-To build your project for production, use:
+2. Install dependencies:
 
 ```bash
-yarn build
+npm install
 ```
 
-(Repeat for npm, pnpm, and bun with respective commands.)
+3. Start the development server:
 
-Once the build process is completed, your application will be ready for deployment in a production environment.
+```bash
+npm run dev
+```
+
+4. Build for production:
+
+```bash
+npm run build
+```
+
+## Project Structure
+
+```
+population-report
+├── src/
+│   ├── assets/            # Static assets
+│   ├── components/        # Vue components
+│   ├── pages/             # App pages
+│   ├── plugins/           # App plugins
+│   ├── router/            # App router
+│   ├── services/          # App services for Api interaction
+│   ├── stores/            # App stores
+│   ├── styles/            # Styles
+│   ├── utils/             # Helpers
+│   └── App.vue            # Root component
+├── public/                # Public static assets
+├── index.html            # Entry HTML file
+└── vite.config.js        # Vite configuration
+```
