@@ -3,16 +3,29 @@ import {fetchCountry} from "@/services/countries.js";
 import debounce from "@/utils/debounce.js";
 import colors from 'vuetify/lib/util/colors';
 import LegendCircle from "@/components/LegendCircle.vue";
+import {useSelectedCountriesStore} from "@/stores/selected-countries.js";
+import {storeToRefs} from "pinia";
 
-const props = defineProps(['selectedCountry', 'excluded', 'color'])
-defineEmits(["update:selectedCountry"]);
-
-const countryColor = computed( () => colors[props.color].base )
+const props = defineProps([ 'countryId'])
+const store = useSelectedCountriesStore();
+const {selectedCountriesIso: excluded} = storeToRefs(store)
 
 const searchCountry = ref(null)
 const isLoadingCountries = ref(false);
 const countries = ref([])
 const fetchLimit = ref(30);
+
+const selectedCountry = computed({
+  set: (value) => {
+    store.updateCountry(props.countryId, value)
+  },
+  get: () => {
+    const {name, iso2} = store.getCountryById(props.countryId);
+    return name ? {name, iso2} : null;
+  }
+});
+
+const countryColor = computed(() => colors[store.getCountryById(props.countryId)?.baseColor]?.base || '')
 
 onMounted(() => setCountries())
 
@@ -30,8 +43,8 @@ async function setCountries() {
 const itemProps = (country) => ({
   value: country,
   title: country.name,
-  subtitle: props.excluded.includes(country.iso2) ? 'Country already selected' : '',
-  disabled: props.excluded.includes(country.iso2)
+  subtitle: excluded.value.includes(country.iso2) ? 'Country already selected' : '',
+  disabled: excluded.value.includes(country.iso2)
 })
 
 </script>
@@ -43,8 +56,7 @@ const itemProps = (country) => ({
     variant="outlined"
     density="compact"
     hide-details="auto"
-    :value="selectedCountry"
-    @update:modelValue="$emit('update:selectedCountry', $event)"
+    v-model="selectedCountry"
     :items="countries"
     :item-props="itemProps"
     :loading="isLoadingCountries"
@@ -75,8 +87,4 @@ const itemProps = (country) => ({
 </template>
 
 <style scoped lang="scss">
-
-
-
-
 </style>

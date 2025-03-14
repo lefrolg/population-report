@@ -38,12 +38,10 @@ const filteredSelectedData = computed(() => {
   }, [])
 })
 
-const groupedCities = computed(() => {
-  return filteredSelectedData.value.reduce((groupedCities, country) => {
-    groupedCities[country.name] = country.cities;
-    return groupedCities;
-  }, {});
-});
+function getCountryCitiesByName(name) {
+  return filteredSelectedData.value.find(country => country.name === name)?.cities || []
+}
+
 const countryLabels = computed(() => filteredSelectedData.value.map(country => country.name));
 
 const datasets = computed(() => {
@@ -51,13 +49,15 @@ const datasets = computed(() => {
   const maxCitiesCount = Math.max(...selectedData.value.map(country => country.cities.length));
   for (let i = 0; i < maxCitiesCount; i++) {
     const dataForDataset = countryLabels.value.map(countryName => {
-      const city = groupedCities.value[countryName][i];
+      const cities = getCountryCitiesByName(countryName);
+      const city = cities[i];
       return city ? city?.population || null : null;
     });
     dataSetsArr.push({
       data: dataForDataset,
       backgroundColor: countryLabels.value.map(countryName => {
-        const city = groupedCities.value[countryName][i];
+        const cities = getCountryCitiesByName(countryName);
+        const city = cities[i];
         return city ? city.color : 'transparent';
       }),
       borderRadius: {
@@ -79,7 +79,8 @@ const chartData = computed(() => ({
 
 function getBarLabelName(labelIndex, datasetIndex) {
   const countryName = countryLabels.value[labelIndex];
-  const city = groupedCities.value[countryName][datasetIndex];
+  const cities = getCountryCitiesByName(countryName);
+  const city = cities[datasetIndex];
   return city ? city.name : '';
 }
 
@@ -140,6 +141,7 @@ const chartOptions = {
       ></v-select>
     </div>
   </div>
+  {{chartData.datasets}}
   <Bar class="chart" v-if="chartData.datasets.length" :data="chartData" :options="chartOptions"/>
   <div v-else class="chart empty d-flex align-center justify-center rounded-lg bg-grey-lighten-2">
     Select countries and cities to view the population chart

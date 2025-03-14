@@ -21,9 +21,9 @@
           </div>
         </div>
       </v-col>
-      <v-col cols="9">
-        <div class="position-relative fill-height">
-          <PopulationChart class="position-sticky top-0"/>
+      <v-col cols="9 position-relative fill-height">
+        <div class="position-sticky top-0">
+          <PopulationChart />
         </div>
       </v-col>
     </v-row>
@@ -38,7 +38,7 @@ import {storeToRefs} from "pinia";
 import PopulationChart from "@/components/PopulationChart.vue";
 
 const store = useSelectedCountriesStore();
-const {maxCountries, selectedCountriesId: createdLines} = storeToRefs(store)
+const {maxCountries, createdLines} = storeToRefs(store)
 
 onMounted(() => {
   addCountry()
@@ -46,7 +46,7 @@ onMounted(() => {
 
 function addCountry() {
   const countryId = generateId();
-  store.addCountry(countryId)
+  store.addCountryId(countryId)
 }
 
 function removeCountry(id) {
