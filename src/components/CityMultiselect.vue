@@ -14,7 +14,10 @@ const selectedCitiesValue = computed({
   set: (values) => {
     if (values.length > maxCities.value) return;
     const citiesValue = citiesWithRecent.value.filter((city) => values.includes(city.name))
-    store.updateCities(props.countryId, citiesValue)
+    store.updateCities(props.countryId, citiesValue);
+    if(searchCity.value && cities.value.find(c => values.includes(c.name))) {
+      searchCity.value = ''
+    }
   },
   get: () => {
     return store.getCountryCities(props.countryId) || []
@@ -51,6 +54,8 @@ watch(searchCity,
 
 async function setCities() {
   if (!selectedCountryIso.value) return;
+  if(!searchCity.value && selectedCitiesValue.value.length) return false;
+
   isLoadingCities.value = true;
 
   cities.value = [];
