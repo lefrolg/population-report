@@ -53,20 +53,23 @@ const datasets = computed(() => {
       const city = cities[i];
       return city ? city?.population || null : null;
     });
-    dataSetsArr.push({
-      data: dataForDataset,
-      backgroundColor: countryLabels.value.map(countryName => {
-        const cities = getCountryCitiesByName(countryName);
-        const city = cities[i];
-        return city ? city.color : 'transparent';
-      }),
-      borderRadius: {
-        topLeft: 4,
-        topRight: 4,
-      },
-      maxBarThickness: 150,
-      minBarLength: 4,
-    });
+
+    if (dataForDataset.length) {
+      dataSetsArr.push({
+        data: dataForDataset,
+        backgroundColor: countryLabels.value.map(countryName => {
+          const cities = getCountryCitiesByName(countryName);
+          const city = cities[i];
+          return city ? city.color : 'transparent';
+        }),
+        borderRadius: {
+          topLeft: 4,
+          topRight: 4,
+        },
+        maxBarThickness: 150,
+        minBarLength: 4,
+      });
+    }
   }
   return dataSetsArr;
 });
@@ -141,8 +144,10 @@ const chartOptions = {
       ></v-select>
     </div>
   </div>
-  {{chartData.datasets}}
   <Bar class="chart" v-if="chartData.datasets.length" :data="chartData" :options="chartOptions"/>
+  <div v-else-if="citySize" class="chart empty d-flex align-center justify-center rounded-lg bg-grey-lighten-2">
+    No city matches your filter
+  </div>
   <div v-else class="chart empty d-flex align-center justify-center rounded-lg bg-grey-lighten-2">
     Select countries and cities to view the population chart
   </div>
