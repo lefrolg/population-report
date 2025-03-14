@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-row>
+    <v-row align="stretch">
       <v-col cols="3">
         <div class="countries">
           <CountryLine
@@ -22,7 +22,9 @@
         </div>
       </v-col>
       <v-col cols="9">
-        <PopulationChart/>
+        <div class="position-relative h-100">
+          <PopulationChart class="position-sticky top-0"/>
+        </div>
       </v-col>
     </v-row>
   </v-container>

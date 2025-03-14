@@ -56,6 +56,8 @@ function getBarLabelName(labelIndex, datasetIndex) {
 }
 
 const chartOptions = {
+  maintainAspectRatio: true,
+  responsive: true,
   skipNull: true,
   scales: {
     y: {
@@ -88,9 +90,11 @@ const chartOptions = {
 </script>
 
 <template>
-  <Bar v-if="chartData.datasets.length" :data="chartData" :options="chartOptions"/>
+  <Bar class="chart" v-if="chartData.datasets.length" :data="chartData" :options="chartOptions"/>
 </template>
 
 <style scoped lang="scss">
-
+.chart {
+  max-height: 70vh;
+}
 </style>
