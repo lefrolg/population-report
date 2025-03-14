@@ -1,18 +1,27 @@
 <template>
   <v-container>
     <v-row align="stretch">
-      <v-col cols="12" lg="3">
+      <v-col
+        cols="12"
+        lg="3"
+      >
         <div class="countries">
           <CountryLine
             v-for="countryId in createdLines"
             :key="countryId"
-            :countryId="countryId"
+            :country-id="countryId"
             @remove-country="removeCountry"
           />
-          <div class="py-2" v-if="createdLines.length < maxCountries">
-            <v-btn variant="outlined" @click="addCountry">
+          <div
+            v-if="createdLines.length < maxCountries"
+            class="py-2"
+          >
+            <v-btn
+              variant="outlined"
+              @click="addCountry"
+            >
               <template #prepend>
-                <v-icon icon="mdi-plus"></v-icon>
+                <v-icon icon="mdi-plus" />
               </template>
               <template #default>
                 Add Country
@@ -21,7 +30,11 @@
           </div>
         </div>
       </v-col>
-      <v-col cols="12" lg="9" class="position-relative">
+      <v-col
+        cols="12"
+        lg="9"
+        class="position-relative"
+      >
         <div class="position-sticky top-0">
           <PopulationChart />
         </div>

@@ -27,7 +27,13 @@ function removeLine() {
         :country-id="countryId"
       />
     </div>
-    <v-btn icon="mdi-close" variant="plain" density="comfortable" title="Remove line" @click="removeLine"></v-btn>
+    <v-btn
+      icon="mdi-close"
+      variant="plain"
+      density="comfortable"
+      title="Remove line"
+      @click="removeLine"
+    />
   </div>
 </template>
 

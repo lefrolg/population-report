@@ -13,8 +13,11 @@ defineProps({
 </script>
 
 <template>
-  <span v-if="color" class="legend" :style="{backgroundColor: color, width: size + 'px'}"></span>
-
+  <span
+    v-if="color"
+    class="legend"
+    :style="{backgroundColor: color, width: size + 'px'}"
+  />
 </template>
 
 <style scoped lang="scss">

@@ -122,33 +122,53 @@ const chartOptions = {
 </script>
 
 <template>
-
   <div class="d-flex flex-column flex-lg-row ga-1 ga-lg-4 align-lg-center mb-1">
     <h1>Population report</h1>
     <div class="ml-auto">
-      <v-radio-group inline v-model="comparisonType" hide-details="auto">
-        <v-radio label="Less" value="less"></v-radio>
-        <v-radio label="More" value="more"></v-radio>
+      <v-radio-group
+        v-model="comparisonType"
+        inline
+        hide-details="auto"
+      >
+        <v-radio
+          label="Less"
+          value="less"
+        />
+        <v-radio
+          label="More"
+          value="more"
+        />
       </v-radio-group>
     </div>
     <div class="cities-size-wrapper my-2 ml-auto ml-lg-0">
       <v-select
+        v-model="citySize"
         label="Select cities size"
         variant="outlined"
         density="compact"
         hide-details="auto"
         clearable
-        v-model="citySize"
         :items="filterSizeOptions"
         :item-props="itemProps"
-      ></v-select>
+      />
     </div>
   </div>
-  <Bar class="chart" v-if="chartData.datasets.length" :data="chartData" :options="chartOptions"/>
-  <div v-else-if="citySize" class="chart empty d-flex align-center justify-center rounded-lg bg-grey-lighten-2 pa-4 text-center">
+  <Bar
+    v-if="chartData.datasets.length"
+    class="chart"
+    :data="chartData"
+    :options="chartOptions"
+  />
+  <div
+    v-else-if="citySize"
+    class="chart empty d-flex align-center justify-center rounded-lg bg-grey-lighten-2 pa-4 text-center"
+  >
     No city matches your filter
   </div>
-  <div v-else class="chart empty d-flex align-center justify-center rounded-lg bg-grey-lighten-2 pa-4 text-center">
+  <div
+    v-else
+    class="chart empty d-flex align-center justify-center rounded-lg bg-grey-lighten-2 pa-4 text-center"
+  >
     Select countries and cities to view the population chart
   </div>
 </template>

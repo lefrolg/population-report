@@ -5,7 +5,12 @@ import LegendCircle from "@/components/LegendCircle.vue";
 import {useSelectedCountriesStore} from "@/stores/selected-countries.js";
 import {storeToRefs} from "pinia";
 
-const props = defineProps(['countryId'])
+const props = defineProps({
+  countryId: {
+    type: Number,
+    required: true,
+  }
+})
 
 const store = useSelectedCountriesStore();
 const {maxCities} = storeToRefs(store)
@@ -98,6 +103,7 @@ function getCityColor(name) {
 <template>
   <v-select
     v-if="selectedCountryIso"
+    v-model="selectedCitiesValue"
     :class="{'mt-2': !selectedCitiesValue.length, 'mt-3': selectedCitiesValue.length}"
     label="Select cities"
     variant="outlined"
@@ -105,7 +111,6 @@ function getCityColor(name) {
     multiple
     chips
     hide-details="auto"
-    v-model="selectedCitiesValue"
     :items="citiesWithRecent"
     :item-props="itemProps"
     :loading="isLoadingCities"
@@ -113,21 +118,35 @@ function getCityColor(name) {
     closable-chips
     :auto-select-first="false"
   >
-    <template #chip="{item, props}" v-bind="props">
+    <template
+      #chip="{item, props}"
+      v-bind="props"
+    >
       <v-chip v-bind="props">
-        <legend-circle class="mr-2" :color="getCityColor(item.title)" :size="16"/>
+        <legend-circle
+          class="mr-2"
+          :color="getCityColor(item.title)"
+          :size="16"
+        />
         {{ item.title }}
       </v-chip>
     </template>
     <template #prepend-item>
       <v-list-item class="border-b">
         <v-text-field
+          v-model="searchCity"
           clearable
+          placeholder="Type to search"
+          variant="plain"
+          density="compact"
+          hide-details="auto"
           @keydown.stop
-          v-model="searchCity" placeholder="Type to search" variant="plain" density="compact"
-          hide-details="auto"/>
+        />
       </v-list-item>
-      <v-list-item v-if="isLimitReached" class="text-red-darken-3">
+      <v-list-item
+        v-if="isLimitReached"
+        class="text-red-darken-3"
+      >
         Limit of cities reached
       </v-list-item>
       <v-list-item v-if="isLoadingCities">
