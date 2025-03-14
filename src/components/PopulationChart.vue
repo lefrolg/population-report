@@ -123,7 +123,7 @@ const chartOptions = {
 
 <template>
 
-  <div class="d-flex flex-column flex-lg-row ga-1 ga-lg-4 align-lg-center mb-2">
+  <div class="d-flex flex-column flex-lg-row ga-1 ga-lg-4 align-lg-center mb-1">
     <h1>Population report</h1>
     <div class="ml-auto">
       <v-radio-group inline v-model="comparisonType" hide-details="auto">
@@ -131,7 +131,7 @@ const chartOptions = {
         <v-radio label="More" value="more"></v-radio>
       </v-radio-group>
     </div>
-    <div class="cities-size-wrapper mt-2 ml-auto ml-lg-0">
+    <div class="cities-size-wrapper my-2 ml-auto ml-lg-0">
       <v-select
         label="Select cities size"
         variant="outlined"
