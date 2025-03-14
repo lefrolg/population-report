@@ -5,18 +5,46 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {useSelectedCountriesStore} from "@/stores/selected-countries.js";
 import {storeToRefs} from "pinia";
 
+// filter
+
+const filterSizeOptions = [1000, 10000, 100000, 500000, 1000000];
+const itemProps = (size) => ({
+ value: size,
+ title: size.toLocaleString("en-US", {notation: "compact"})
+})
+const citySize = defineModel();
+const comparisonType = ref();
+
+// chart
+
 ChartJS.register(Title, Tooltip, BarElement, CategoryScale, LinearScale, ChartDataLabels)
 
 const store = useSelectedCountriesStore();
 const {selectedDataWithCities: selectedData} = storeToRefs(store);
 
+const filteredSelectedData = computed(() => {
+  if (!citySize.value || !comparisonType.value) return selectedData.value;
+  return selectedData.value.reduce((filteredData, country) => {
+    const cities = country.cities.filter(city => comparisonType.value === 'less'
+      ? city?.population <= citySize.value
+      : city?.population >= citySize.value )
+    if (cities.length) {
+      filteredData.push({
+        ...country,
+        cities
+      })
+    }
+    return filteredData;
+  }, [])
+})
+
 const groupedCities = computed(() => {
-  return selectedData.value.reduce((groupedCities, country) => {
+  return filteredSelectedData.value.reduce((groupedCities, country) => {
     groupedCities[country.name] = country.cities;
     return groupedCities;
   }, {});
 });
-const countryLabels = computed(() => selectedData.value.map(country => country.name));
+const countryLabels = computed(() => filteredSelectedData.value.map(country => country.name));
 
 const datasets = computed(() => {
   const dataSetsArr = [];
@@ -63,7 +91,7 @@ const chartOptions = {
     y: {
       beginAtZero: true,
       ticks: {
-        callback: (value) => value.toLocaleString("en-US", { notation: "compact" })
+        callback: (value) => value.toLocaleString("en-US", {notation: "compact"})
       }
     },
   },
@@ -90,11 +118,44 @@ const chartOptions = {
 </script>
 
 <template>
+
+  <div class="d-flex flex-row ga-4">
+    <h1>Population report</h1>
+    <div class="ml-auto">
+      <v-radio-group inline v-model="comparisonType">
+        <v-radio label="Less" value="less"></v-radio>
+        <v-radio label="More" value="more"></v-radio>
+      </v-radio-group>
+    </div>
+    <div class="cities-size-wrapper">
+      <v-select
+        label="Select cities size"
+        variant="outlined"
+        density="compact"
+        hide-details="auto"
+        clearable
+        v-model="citySize"
+        :items="filterSizeOptions"
+        :item-props="itemProps"
+      ></v-select>
+    </div>
+  </div>
   <Bar class="chart" v-if="chartData.datasets.length" :data="chartData" :options="chartOptions"/>
+  <div v-else class="chart empty d-flex align-center justify-center rounded-lg bg-grey-lighten-2">
+    Select countries and cities to view the population chart
+  </div>
 </template>
 
 <style scoped lang="scss">
 .chart {
   max-height: 70vh;
+
+  &.empty {
+    height: 70vh;
+  }
+}
+
+.cities-size-wrapper {
+  width: 200px;
 }
 </style>

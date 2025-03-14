@@ -22,7 +22,7 @@
         </div>
       </v-col>
       <v-col cols="9">
-        <div class="position-relative h-100">
+        <div class="position-relative fill-height">
           <PopulationChart class="position-sticky top-0"/>
         </div>
       </v-col>
