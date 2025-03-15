@@ -8,7 +8,7 @@ import {storeToRefs} from "pinia";
 
 const props = defineProps({
   countryId: {
-    type: Number,
+    type: String,
     required: true,
   }
 })
@@ -25,16 +25,19 @@ const selectedCountry = computed({
     store.updateCountry(props.countryId, value)
   },
   get: () => {
-    const {name, iso2} = store.getCountryById(props.countryId);
-    return name ? {name, iso2} : null;
+    const country = store.getCountryById(props.countryId)
+    if (!country) {
+      return null
+    }
+    const {name, iso2, color} = country;
+    return {name, iso2, color};
   }
 });
-
-const countryColor = computed(() => colors[store.getCountryById(props.countryId)?.baseColor]?.base || '')
 
 onMounted(() => setCountries())
 
 watch(searchCountry, debounce(() => setCountries()))
+
 async function setCountries() {
   isLoadingCountries.value = true;
   countries.value = [];
@@ -74,7 +77,7 @@ const itemProps = (country) => ({
     >
       <legend-circle
         class="mr-2"
-        :color="countryColor"
+        :color="selectedCountry?.color"
         :size="16"
       />
       {{ selectedCountry.name }}

@@ -7,10 +7,10 @@ import {storeToRefs} from "pinia";
 
 // filter
 
-const filterSizeOptions = [1000, 10000, 100000, 500000, 1000000];
+const filterSizeOptions = [1000, 10000, 100000, 500000, 1000000, 10000000];
 const itemProps = (size) => ({
- value: size,
- title: size.toLocaleString("en-US", {notation: "compact"})
+  value: size,
+  title: size.toLocaleString("en-US", {notation: "compact"})
 })
 const citySize = defineModel();
 const comparisonType = ref();
@@ -22,44 +22,36 @@ ChartJS.register(Title, Tooltip, BarElement, CategoryScale, LinearScale, ChartDa
 const store = useSelectedCountriesStore();
 const {selectedDataWithCities: selectedData} = storeToRefs(store);
 
-const filteredSelectedData = computed(() => {
+const filteredData = computed(() => {
   if (!citySize.value || !comparisonType.value) return selectedData.value;
-  return selectedData.value.reduce((filteredData, country) => {
-    const cities = country.cities.filter(city => comparisonType.value === 'less'
-      ? city?.population <= citySize.value
-      : city?.population >= citySize.value )
-    if (cities.length) {
-      filteredData.push({
-        ...country,
-        cities
-      })
-    }
-    return filteredData;
-  }, [])
+  return Object.fromEntries(
+    Object.entries(selectedData.value).reduce((filteredData, [iso, country]) => {
+      const cities = country.cities.filter(city => comparisonType.value === 'less'
+        ? city?.population <= citySize.value
+        : city?.population >= citySize.value)
+      if (cities.length) {
+        filteredData.push([iso, {...country, cities}])
+      }
+      return filteredData;
+    }, []))
 })
 
-function getCountryCitiesByName(name) {
-  return filteredSelectedData.value.find(country => country.name === name)?.cities || []
-}
-
-const countryLabels = computed(() => filteredSelectedData.value.map(country => country.name));
+const countryLabels = computed(() => Object.keys(filteredData.value));
 
 const datasets = computed(() => {
   const dataSetsArr = [];
-  const maxCitiesCount = Math.max(...selectedData.value.map(country => country.cities.length));
+  const maxCitiesCount = Math.max(...Object.values(selectedData.value).map(country => country.cities.length));
   for (let i = 0; i < maxCitiesCount; i++) {
-    const dataForDataset = countryLabels.value.map(countryName => {
-      const cities = getCountryCitiesByName(countryName);
-      const city = cities[i];
+    const dataForDataset = countryLabels.value.map(iso => {
+      const city = filteredData.value[iso].cities[i];
       return city ? city?.population || null : null;
     });
 
     if (dataForDataset.length) {
       dataSetsArr.push({
         data: dataForDataset,
-        backgroundColor: countryLabels.value.map(countryName => {
-          const cities = getCountryCitiesByName(countryName);
-          const city = cities[i];
+        backgroundColor: countryLabels.value.map(iso => {
+          const city = filteredData.value[iso].cities[i];
           return city ? city.color : 'transparent';
         }),
         borderRadius: {
@@ -81,9 +73,8 @@ const chartData = computed(() => ({
 }));
 
 function getBarLabelName(labelIndex, datasetIndex) {
-  const countryName = countryLabels.value[labelIndex];
-  const cities = getCountryCitiesByName(countryName);
-  const city = cities[datasetIndex];
+  const countryIso = countryLabels.value[labelIndex];
+  const city = filteredData.value[countryIso].cities[datasetIndex];
   return city ? city.name : '';
 }
 
@@ -91,6 +82,7 @@ const chartOptions = {
   maintainAspectRatio: true,
   responsive: true,
   skipNull: true,
+
   scales: {
     y: {
       beginAtZero: true,
@@ -98,6 +90,13 @@ const chartOptions = {
         callback: (value) => value.toLocaleString("en-US", {notation: "compact"})
       }
     },
+    x: {
+      ticks: {
+        callback: (index) => {
+          return Object.values(filteredData.value)[index]?.name
+        }
+      }
+    }
   },
   plugins: {
     datalabels: {
@@ -110,7 +109,10 @@ const chartOptions = {
     },
     tooltip: {
       callbacks: {
-        title: ([context]) => `${getBarLabelName(context.dataIndex, context.datasetIndex)} (${context.label})`,
+        title: ([context]) => {
+          const countryName = filteredData.value[context.label]?.name;
+          return `${getBarLabelName(context.dataIndex, context.datasetIndex)} (${countryName})`
+        },
         label: (context) => {
           return 'Population: ' + context.formattedValue;
         },

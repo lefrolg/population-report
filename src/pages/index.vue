@@ -7,13 +7,13 @@
       >
         <div class="countries">
           <CountryLine
-            v-for="countryId in createdLines"
+            v-for="(_, countryId) in createdLines"
             :key="countryId"
             :country-id="countryId"
             @remove-country="removeCountry"
           />
           <div
-            v-if="createdLines.length < maxCountries"
+            v-if="Object.keys(createdLines).length < maxCountries"
             class="py-2"
           >
             <v-btn

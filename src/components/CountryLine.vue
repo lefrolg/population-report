@@ -1,15 +1,20 @@
 <script setup>
 import CountrySelect from "@/components/CountrySelect.vue";
 import CityMultiselect from "@/components/CityMultiselect.vue";
+import {useSelectedCountriesStore} from "@/stores/selected-countries.js";
+import {storeToRefs} from "pinia";
 
 const props = defineProps({
   countryId: {
-    type: Number,
+    type: String,
     required: true,
   }
 })
 const emits = defineEmits(['removeCountry'])
+const store = useSelectedCountriesStore();
+const {createdLines} = storeToRefs(store)
 
+const countryIso = computed(() => createdLines.value[props.countryId] || null)
 
 function removeLine() {
   emits('removeCountry', props.countryId);
@@ -24,7 +29,8 @@ function removeLine() {
         :country-id="countryId"
       />
       <city-multiselect
-        :country-id="countryId"
+        v-if="countryIso"
+        :country-iso="countryIso"
       />
     </div>
     <v-btn

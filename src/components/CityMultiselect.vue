@@ -6,8 +6,8 @@ import {useSelectedCountriesStore} from "@/stores/selected-countries.js";
 import {storeToRefs} from "pinia";
 
 const props = defineProps({
-  countryId: {
-    type: Number,
+  countryIso: {
+    type: String,
     required: true,
   }
 })
@@ -18,14 +18,16 @@ const {maxCities} = storeToRefs(store)
 const selectedCitiesValue = computed({
   set: (values) => {
     if (values.length > maxCities.value) return;
+
     const citiesValue = citiesWithRecent.value.filter((city) => values.includes(city.name))
-    store.updateCities(props.countryId, citiesValue);
+    store.updateCities(props.countryIso, citiesValue);
+
     if(searchCity.value && cities.value.find(c => values.includes(c.name))) {
       searchCity.value = ''
     }
   },
   get: () => {
-    return store.getCountryCities(props.countryId) || []
+    return store.getCountryCities(props.countryIso) || []
   }
 })
 
@@ -41,11 +43,9 @@ function resetState() {
   recentCities.value = [];
 }
 
-const selectedCountryIso = computed(() => {
-  return store.getCountryById(props.countryId)?.iso2 || ''
-})
+onMounted(() => setCities())
 
-watch(selectedCountryIso, () => {
+watch(() => props.countryIso, () => {
   resetState();
   setCities();
 });
@@ -58,13 +58,13 @@ watch(searchCity,
 );
 
 async function setCities() {
-  if (!selectedCountryIso.value) return;
+  if (!props.countryIso) return;
   if(!searchCity.value && selectedCitiesValue.value.length) return false;
 
   isLoadingCities.value = true;
 
   cities.value = [];
-  const data = await fetchCity(selectedCountryIso.value, encodeURI(searchCity.value || ''))
+  const data = await fetchCity(props.countryIso, encodeURI(searchCity.value || ''))
   cities.value = data ? data : []
 
   isLoadingCities.value = false;
@@ -102,7 +102,6 @@ function getCityColor(name) {
 
 <template>
   <v-select
-    v-if="selectedCountryIso"
     v-model="selectedCitiesValue"
     :class="{'mt-2': !selectedCitiesValue.length, 'mt-3': selectedCitiesValue.length}"
     label="Select cities"
