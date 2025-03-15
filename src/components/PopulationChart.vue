@@ -82,7 +82,11 @@ const chartOptions = {
   maintainAspectRatio: true,
   responsive: true,
   skipNull: true,
-
+  layout: {
+    padding: {
+      top: 50
+    }
+  },
   scales: {
     y: {
       beginAtZero: true,
